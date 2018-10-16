@@ -1,0 +1,10 @@
+# pycharm
+.idea/*
+
+# python
+__pycache__/
+venv/
+
+# proyecto
+*.txt
+!gt.txt
