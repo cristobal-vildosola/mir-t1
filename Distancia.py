@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 import time
 from typing import List
 
@@ -113,13 +114,14 @@ def insertar_min_frame(lista: List[Frame], frame: Frame):
     return
 
 
-def frames_mas_cercanos_frame(frame: List[int], videos: List[Video], k: int = 5) -> List[Frame]:
+def frames_mas_cercanos_frame(frame: List[int], videos: List[Video], k: int = 5, funcion=distancia_l1) -> List[Frame]:
     """
     Encuentra los k frames más cercanos al frame dado, dentro de todos los frames en una lista de Videos.
 
     :param frame: el frame del cuál buscar frames cercanos.
     :param videos: una lista de Videos en los cuáles buscar frames cercanos.
     :param k: el número de frames cercanos a buscar.
+    :param funcion: la función para calcular la distancia entre 2 vectores de ints.
 
     :return: una lista de Frames.
     """
@@ -129,14 +131,13 @@ def frames_mas_cercanos_frame(frame: List[int], videos: List[Video], k: int = 5)
     # buscar los frames más cercanos entre todos los frames de los videos.
     for video in videos:
         for i in range(len(video.frames)):
-            # acá se define qué función de distancia se utiliza
-            dist = distancia_l1(frame, video.frames[i])
+            dist = funcion(frame, video.frames[i])
             insertar_min_frame(cercanos, Frame(video.nombre, i, dist))
 
     return cercanos
 
 
-def frames_mas_cercanos_video(archivo: str, videos: List[Video], carpeta_log: str, k: int = 5):
+def frames_mas_cercanos_video(archivo: str, videos: List[Video], carpeta_log: str, k: int = 5, funcion=distancia_l1):
     """
     Encuentra los k frames más cercanos a cada frame del video dado, dentro de todos los frames en una lista de Videos,
     registra esta información en un log txt.
@@ -145,6 +146,7 @@ def frames_mas_cercanos_video(archivo: str, videos: List[Video], carpeta_log: st
     :param videos: una lista de Videos en los cuáles buscar frames cercanos.
     :param carpeta_log: la carpeta en la cual guardar el log.
     :param k: el número de frames cercanos a buscar.
+    :param funcion: la función para calcular la distancia entre 2 vectores de ints.
     """
 
     # medir tiempo
@@ -163,7 +165,7 @@ def frames_mas_cercanos_video(archivo: str, videos: List[Video], carpeta_log: st
 
     # buscar los frames más cercanos de cada frame
     for i in range(len(video.frames)):
-        cercanos = frames_mas_cercanos_frame(video.frames[i], videos, k=k)
+        cercanos = frames_mas_cercanos_frame(video.frames[i], videos, k=k, funcion=funcion)
         cercanos_str = ' | '.join([f'{frame.comercial} # {frame.indice}' for frame in cercanos])
 
         # registrar resultado
@@ -177,11 +179,36 @@ def frames_mas_cercanos_video(archivo: str, videos: List[Video], carpeta_log: st
     return
 
 
-def main():
+def main(archivo: str, k: int, funcion):
+    """
+    Encuentra los k frames más cercanos a cada frame del video dado, dentro de todos los frames en una lista de Videos,
+    registra esta información en un log txt en la carpeta television_cercanos/.
+
+    :param archivo: el nombre del video de television del cuál buscar frames cercanos.
+    :param k: el número de frames cercanos a buscar.
+    :param funcion: la función para calcular la distancia entre 2 vectores de ints.
+    """
+
     comerciales = leer_videos('comerciales_car')
-    frames_mas_cercanos_video('television_car/mega-2014_04_10.txt', comerciales, 'television_cercanos')
+    frames_mas_cercanos_video(f'television_car/{archivo}.txt', comerciales, 'television_cercanos', k, funcion)
     return
 
 
 if __name__ == '__main__':
-    main()
+    nombre_video = ''
+
+    if len(sys.argv) == 1:
+        nombre_video = 'mega-2014_04_10'
+    elif len(sys.argv) == 2:
+        nombre_video = sys.argv[1]
+    else:
+        print(f'Uso: {sys.argv[0]} nombre_video (sin extensión)\n por ejemplo: {sys.argv[0]} mega-2014_04_10')
+        exit(1)
+
+    # cantidad de frames cercanos a buscar
+    cantidad_de_frames = 5
+
+    # funcion de distancia a utilizar
+    funcion_de_distancia = distancia_l2
+
+    main(nombre_video, cantidad_de_frames, funcion_de_distancia)

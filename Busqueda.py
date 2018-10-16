@@ -1,4 +1,5 @@
 import re
+import sys
 from typing import List, Tuple, Dict
 
 from Distancia import Frame, leer_videos
@@ -105,7 +106,7 @@ def buscar_indice(comercial: str, indice: int, frames: List[Frame], rango: int =
     return False
 
 
-class Comercial:
+class Candidato:
     def __init__(self, nombre: str, indice: int, tiempo_inicio: float):
         self.nombre = nombre
         self.indice = indice
@@ -116,7 +117,7 @@ class Comercial:
 def buscar_comerciales(archivo: str):
     """
     Busca comerciales en un archivo que contiene los k frames más cercanos a cada frame de un video y los registra en
-    un archivo 'comerciales.txt'
+    un archivo 'respuesta.txt'
 
     :param archivo: la ubicación del archivo.
     """
@@ -132,10 +133,10 @@ def buscar_comerciales(archivo: str):
     numero_frames = contar_frames_comerciales()
 
     # lista de candidatos para buscar comerciales
-    comerciales = []
+    candidatos = []
 
     # abrir log
-    log = open('comerciales.txt', 'a')
+    log = open('respuesta.txt', 'a')
     encontrados = 0
 
     for cercanos in lista_cercanos:
@@ -146,45 +147,45 @@ def buscar_comerciales(archivo: str):
         completados = []
 
         # recorrer candidatos
-        for com in comerciales:
+        for cand in candidatos:
 
             # detectar final del comercial.
-            if com.indice == numero_frames[com.nombre] - 1:
+            if cand.indice == numero_frames[cand.nombre] - 1:
 
                 # registrar comercial.
-                duracion = cercanos.tiempo - com.tiempo_inicio
-                log.write(f'{nombre_video}\t{"%.1f" % com.tiempo_inicio}\t{"%.1f" % duracion}\t{com.nombre}\n')
-                print(f'{nombre_video}\t{"%.1f" % com.tiempo_inicio}\t{"%.1f" % duracion}\t{com.nombre}')
+                duracion = cercanos.tiempo - cand.tiempo_inicio
+                log.write(f'{nombre_video}\t{"%.1f" % cand.tiempo_inicio}\t{"%.1f" % duracion}\t{cand.nombre}\n')
+                print(f'{nombre_video}\t{"%.1f" % cand.tiempo_inicio}\t{"%.1f" % duracion}\t{cand.nombre}')
                 encontrados += 1
 
                 # eliminar de la lista (después del for).
-                completados.append(com.nombre)
+                completados.append(cand.nombre)
 
             # buscar secuencia de comercial.
             else:
-                com.indice += 1
+                cand.indice += 1
 
                 # buscar siguiente frame y contar errores.
-                if not buscar_indice(com.nombre, com.indice, cercanos.frames):
-                    com.errores += 1
+                if not buscar_indice(cand.nombre, cand.indice, cercanos.frames):
+                    cand.errores += 1
 
                 # determinar error de detección y eliminar de la lista (después del for).
-                if com.errores >= 10 or com.indice < 10 and com.errores > 3:
-                    eliminados.append(com)
+                if cand.errores >= 10 or cand.indice < 10 and cand.errores > 3:
+                    eliminados.append(cand)
 
         # eliminar comerciales
         for completado in completados:
-            for com in comerciales:
-                if com.nombre == completado and not com in eliminados:
-                    eliminados.append(com)
+            for cand in candidatos:
+                if cand.nombre == completado and cand not in eliminados:
+                    eliminados.append(cand)
 
         for eliminado in eliminados:
-            comerciales.remove(eliminado)
+            candidatos.remove(eliminado)
 
         # buscar candidatos.
         indice, nombre = buscar_inicio(cercanos.frames, maximo_inicial=1)
         if indice != -1:
-            comerciales.append(Comercial(nombre, indice, cercanos.tiempo))
+            candidatos.append(Candidato(nombre, indice, cercanos.tiempo))
 
     # cerrar log
     log.close()
@@ -193,10 +194,21 @@ def buscar_comerciales(archivo: str):
     return
 
 
-def main():
-    buscar_comerciales('television_cercanos/mega-2014_04_11.txt')
+def main(archivo: str):
+    buscar_comerciales(f'television_cercanos/{archivo}.txt')
     return
 
 
 if __name__ == '__main__':
-    main()
+    video = ''
+
+    if len(sys.argv) == 1:
+        video = 'mega-2014_04_10'
+    elif len(sys.argv) == 2:
+        video = sys.argv[1]
+    else:
+        print(f'Uso: {sys.argv[0]} nombre_video (sin extensión)\n por ejemplo: {sys.argv[0]} mega-2014_04_10')
+        exit(1)
+
+    # TODO configuración para detección de errores
+    main(video)

@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 import time
 from typing import Tuple
 
@@ -120,11 +121,34 @@ def caracteristicas_videos(carpeta: str, salto_frames: int = 10, tamano: Tuple[i
     return
 
 
-def main():
-    caracteristicas_videos('comerciales')
-    caracteristicas_video('television/mega-2014_04_23.mp4', 'television_car')
+def main(archivo: str, salto_frames, tamano):
+    """
+    Extrae las caracteristicas de todos los comerciales y luego extrae las características de un video de television.
+
+    :param archivo: el nombre del video de televisión.
+    :param salto_frames: número de frames que se saltan cada vez que se extraen caracteristicas.
+    :param tamano: el tamaño del mapa al cual reducir la dimension de cada frame.
+    """
+    caracteristicas_videos('comerciales', salto_frames, tamano)
+    caracteristicas_video(f'television/{archivo}.mp4', 'television_car', salto_frames, tamano)
     return
 
 
 if __name__ == '__main__':
-    main()
+    nombre_video = ''
+
+    if len(sys.argv) == 1:
+        nombre_video = 'mega-2014_04_10'
+    elif len(sys.argv) == 2:
+        nombre_video = sys.argv[1]
+    else:
+        print(f'Uso: {sys.argv[0]} nombre_video (sin extensión)\n por ejemplo: {sys.argv[0]} mega-2014_04_10')
+        exit(1)
+
+    # tamaño al cual reducir la imagen
+    tamano_vector = (10, 10)
+
+    # tomar 1 de cada salto frames
+    salto = 10
+
+    main(nombre_video, salto, tamano_vector)
