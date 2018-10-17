@@ -28,4 +28,4 @@ No se puede ejecutar un paso sin haber ejecutado el anterior previamente.
 
 ### Configuración:
 
-Para configurar algunos parámetros de cada fase se puede editar el archivo de cada parte (`Extraccion.py`, `Distancia.py`, `Busqueda.py`). Al final de cada archivo se encuentran los parámetros importantes que se pueden editar fácilmente antes de llamar a la función `main()`.
+Para configurar algunos parámetros de cada fase se puede editar el archivo general y el de cada parte (`Tarea1.py`, `Extraccion.py`, `Distancia.py`, `Busqueda.py`). Al final de cada archivo se encuentran los parámetros importantes que se pueden editar fácilmente antes de llamar a la función `main()`, o en el caso del archivo `Tarea1.py` estos se encuentran dentro de la función.
