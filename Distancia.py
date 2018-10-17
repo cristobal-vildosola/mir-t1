@@ -206,9 +206,9 @@ if __name__ == '__main__':
         exit(1)
 
     # cantidad de frames cercanos a buscar
-    cantidad_de_frames = 5
+    numero_de_cercanos = 5
 
     # funcion de distancia a utilizar
     funcion_de_distancia = distancia_l2
 
-    main(nombre_video, cantidad_de_frames, funcion_de_distancia)
+    main(nombre_video, numero_de_cercanos, funcion_de_distancia)

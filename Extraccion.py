@@ -10,7 +10,7 @@ import numpy
 
 def abrir_video(archivo: str) -> cv2.VideoCapture:
     """
-    Abre un video.
+    Abre un video en el formato de opencv.
 
     :param archivo: nombre del video
     :return: una captura de cv2
@@ -39,14 +39,6 @@ def extraer_caracteristicas(imagen, tamano: Tuple[int, int] = (10, 10)) -> numpy
     imagen_gris = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
     caracteristicas = cv2.resize(imagen_gris, dsize=(tamano[1], tamano[0]), interpolation=cv2.INTER_AREA)
 
-    """ para graficar descomentar estas lineas
-    cv2.imshow("original", imagen)
-    # escalar al tamaño de la imagen original
-    im_caracteristicas = cv2.resize(caracteristicas, dsize=(imagen.shape[1], imagen.shape[0]),
-                                    interpolation=cv2.INTER_NEAREST)
-    cv2.imshow("caracteristicas", im_caracteristicas)
-    # """
-
     return caracteristicas.flatten()
 
 
@@ -71,13 +63,14 @@ def caracteristicas_video(archivo: str, carpeta_log: str, salto_frames: int = 10
 
     # abrir log
     nombre = re.split('[/.]', archivo)[-2]
+
     if not os.path.isdir(carpeta_log):
         os.mkdir(carpeta_log)
     log = open(f'{carpeta_log}/{nombre}.txt', 'w')
 
     print(f'extrayendo caracteristicas de video {nombre}')
-    frame_n = 0  # número de frame
-    fps = video.get(cv2.CAP_PROP_FPS)
+    frame_n = 0  # número de frames
+    fps = video.get(cv2.CAP_PROP_FPS)  # frames por segundo (para calcular tiempo)
 
     while video.grab():
 
@@ -98,6 +91,7 @@ def caracteristicas_video(archivo: str, carpeta_log: str, salto_frames: int = 10
     log.close()
     video.release()
     print(f'la extracción de {int(frame_n / fps)} segundos de video tomo {int(time.time() - t0)} segundos')
+
     return
 
 
@@ -116,7 +110,8 @@ def caracteristicas_videos(carpeta: str, salto_frames: int = 10, tamano: Tuple[i
 
     # extraer la caracteristicas de cada comercial
     for video in videos:
-        caracteristicas_video(f'{carpeta}/{video}', f'{carpeta}_car', salto_frames=salto_frames, tamano=tamano)
+        if video.endswith('.mpg') or video.endswith('.mp4'):
+            caracteristicas_video(f'{carpeta}/{video}', f'{carpeta}_car', salto_frames=salto_frames, tamano=tamano)
 
     return
 
@@ -148,7 +143,7 @@ if __name__ == '__main__':
     # tamaño al cual reducir la imagen
     tamano_vector = (10, 10)
 
-    # tomar 1 de cada salto frames
-    salto = 10
+    # tomar 1 de cada {salto} frames
+    salto = 5
 
     main(nombre_video, salto, tamano_vector)
