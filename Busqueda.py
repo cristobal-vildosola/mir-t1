@@ -170,15 +170,17 @@ def buscar_comerciales(archivo: str):
                     cand.errores += 1
 
                 # determinar error de detección y eliminar de la lista (después del for).
-                if cand.errores >= 10 or cand.indice < 10 and cand.errores > 3:
+                if cand.errores >= 0.2*numero_frames[cand.nombre]:
                     eliminados.append(cand)
 
         # eliminar comerciales
+        for eliminado in eliminados:
+            candidatos.remove(eliminado)
+        eliminados = []
         for completado in completados:
             for cand in candidatos:
-                if cand.nombre == completado and cand not in eliminados:
+                if cand.nombre == completado:
                     eliminados.append(cand)
-
         for eliminado in eliminados:
             candidatos.remove(eliminado)
 
@@ -203,7 +205,7 @@ if __name__ == '__main__':
     video = ''
 
     if len(sys.argv) == 1:
-        video = 'mega-2014_04_10'
+        video = 'mega-2014_04_11'
     elif len(sys.argv) == 2:
         video = sys.argv[1]
     else:

@@ -8,5 +8,6 @@ venv/
 # proyecto
 *.txt
 !gt.txt
+!requirements.txt
 *.mpg
 *.mp4
