@@ -206,7 +206,7 @@ if __name__ == '__main__':
     video = ''
 
     if len(sys.argv) == 1:
-        video = 'mega-2014_04_11'
+        video = 'mega-2014_04_10'
     elif len(sys.argv) == 2:
         video = sys.argv[1]
     else:
@@ -214,6 +214,6 @@ if __name__ == '__main__':
         exit(1)
 
     # máximo porcentaje de errores permitidos
-    max_porc_errores = 0.5
+    max_porc_errores = 0.55
 
     main(video, max_porc_errores)
