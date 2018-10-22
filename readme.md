@@ -16,7 +16,7 @@ La tarea fue programada usando python 3.6, para montar el proyecto se debe hacer
 
 Para ejecutar el proyecto basta con ejecutar `python Tarea1.py {nombre_video}`. El nombre del video debe ser igual al nombre del video en la carpeta `television/` que se desea analizar, sin extensión. e.g. `python Tarea1.py mega-2014_04_10`.
 
-El programa toma aproximadamente 20 minutos en terminar (con procesador intel i7 7a generación), imprimiendo en la consola información del progreso. Los comerciales detectados quedan registrados en el archivo respuesta.txt
+El programa toma aproximadamente 20-25 minutos en terminar la detección en un video (con procesador intel i7 7a generación), imprimiendo en la consola información del progreso. Los comerciales detectados quedan registrados en el archivo respuesta.txt
 
 Opcionalmente, se puede ejecutar cada paso por separado usando:
 
