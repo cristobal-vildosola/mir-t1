@@ -114,12 +114,13 @@ class Candidato:
         self.errores = 0
 
 
-def buscar_comerciales(archivo: str):
+def buscar_comerciales(archivo: str, max_porc_error: float = 0.2):
     """
     Busca comerciales en un archivo que contiene los k frames más cercanos a cada frame de un video y los registra en
     un archivo 'respuesta.txt'
 
     :param archivo: la ubicación del archivo.
+    :param max_porc_error: máximo porcentaje de error que puede haber en una detección.
     """
 
     # nombre del video
@@ -169,8 +170,8 @@ def buscar_comerciales(archivo: str):
                 if not buscar_indice(cand.nombre, cand.indice, cercanos.frames):
                     cand.errores += 1
 
-                # determinar error de detección y eliminar de la lista (después del for).
-                if cand.errores >= 0.2*numero_frames[cand.nombre]:
+                # determinar error de detección y eliminar de la lista (después del loop).
+                if cand.errores >= max_porc_error * numero_frames[cand.nombre]:
                     eliminados.append(cand)
 
         # eliminar comerciales
@@ -196,8 +197,8 @@ def buscar_comerciales(archivo: str):
     return
 
 
-def main(archivo: str):
-    buscar_comerciales(f'television_cercanos/{archivo}.txt')
+def main(archivo: str, max_porc_error: float = 0.2):
+    buscar_comerciales(f'television_cercanos/{archivo}.txt', max_porc_error)
     return
 
 
@@ -212,5 +213,7 @@ if __name__ == '__main__':
         print(f'Uso: {sys.argv[0]} nombre_video (sin extensión)\n por ejemplo: {sys.argv[0]} mega-2014_04_10')
         exit(1)
 
-    # TODO configuración para detección de errores
-    main(video)
+    # máximo porcentaje de errores permitidos
+    max_porc_errores = 0.5
+
+    main(video, max_porc_errores)

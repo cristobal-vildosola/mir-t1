@@ -10,9 +10,9 @@ def main(nombre_video: str):
     t = time.time()
 
     # extraer caracteristicas
-    salto_frames = 10
+    salto_frames = 7
     tamano = (15, 15)
-    caracteristicas_videos('comerciales', salto_frames=salto_frames, tamano=tamano)
+    # caracteristicas_videos('comerciales', salto_frames=salto_frames, tamano=tamano)
     caracteristicas_video(f'television/{nombre_video}.mp4', 'television_car',
                           salto_frames=salto_frames, tamano=tamano)
 
@@ -24,7 +24,8 @@ def main(nombre_video: str):
                               k=frames_cercanos, funcion=funcion_distancia)
 
     # buscar comerciales
-    buscar_comerciales(f'television_cercanos/{nombre_video}.txt')
+    max_porc_errores = 0.5
+    buscar_comerciales(f'television_cercanos/{nombre_video}.txt', max_porc_errores)
 
     print(f'el proceso tomó {int(time.time() - t)} segundos')
     return
