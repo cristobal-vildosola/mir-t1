@@ -29,7 +29,7 @@ No se puede ejecutar un paso sin haber ejecutado el anterior previamente.
 
 ### Evaluación:
 
-Para evaluar la tarea basta ejecutar `python evaluar.py respuestas.txt`
+Para evaluar la tarea basta ejecutar `python evaluar.py respuesta.txt`
 
 
 ### Configuración:
